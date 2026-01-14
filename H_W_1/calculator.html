@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="uk">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Калькулятор</title>
+  <meta charset="UTF-8">
+  <title>Калькулятор</title>
+  <style>
+    .keyboard button {
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      font-size: 18px;
+    }
+  </style>
 </head>
-
 <body>
-    <h2>Калькулятор</h2>
+  <h2>Калькулятор</h2>
 
-    <!-- Три поля -->
-    <input type="text" id="num1" placeholder="Перше число">
-    <input type="text" id="num2" placeholder="Друге число">
-    <input type="text" id="operation" placeholder="Операція (+ - * /)">
-    <br><br>
-    <button onclick="calculate()">Розрахувати</button>
+  <!-- Три поля -->
+  <input type="text" id="num1" placeholder="Перше число">
+  <input type="text" id="num2" placeholder="Друге число">
+  <input type="text" id="operation" placeholder="Операція (+ - * /)">
+  <br><br>
+  <button onclick="calculate()">Розрахувати</button>
 
-    <h3>Клавіатура</h3>
+  <h3>Клавіатура</h3>
+  <div class="keyboard">
     <!-- Цифри -->
     <button onclick="insertValue('1')">1</button>
     <button onclick="insertValue('2')">2</button>
@@ -28,71 +35,68 @@
     <button onclick="insertValue('8')">8</button>
     <button onclick="insertValue('9')">9</button>
     <button onclick="insertValue('0')">0</button>
-    <br>
     <!-- Оператори -->
     <button onclick="insertValue('+')">+</button>
     <button onclick="insertValue('-')">-</button>
     <button onclick="insertValue('*')">*</button>
     <button onclick="insertValue('/')">/</button>
+  </div>
 
-    <script>
-        // Змінна для збереження активного поля
-        let activeField = null;
+  <script>
+    // Глобальний об'єкт для збереження даних
+    let calcData = { num1: "", num2: "", operation: "" };
 
-        // Коли користувач клацає на поле — запам'ятати його
-        document.getElementById("num1").addEventListener("focus", function () {
-            activeField = this;
-        });
-        document.getElementById("num2").addEventListener("focus", function () {
-            activeField = this;
-        });
-        document.getElementById("operation").addEventListener("focus", function () {
-            activeField = this;
-        });
+    // Збереження даних при втраті фокусу
+    document.getElementById("num1").addEventListener("blur", function() {
+      calcData.num1 = this.value;
+    });
+    document.getElementById("num2").addEventListener("blur", function() {
+      calcData.num2 = this.value;
+    });
+    document.getElementById("operation").addEventListener("blur", function() {
+      calcData.operation = this.value;
+    });
 
-        // Вставка значення у вибране поле
-        function insertValue(val) {
-            if (activeField) {
-                activeField.value += val;
-            } else {
-                alert("Спочатку клацніть у поле, куди хочете вводити!");
-            }
-        }
+    // Вставка значення з кнопки у активне поле
+    function insertValue(val) {
+      let active = document.activeElement;
+      if (active.tagName === "INPUT") {
+        active.value += val;
+        active.blur(); // щоб одразу зберегти у глобальний об'єкт
+      }
+    }
 
-        // Функція розрахунку
-        function calculate() {
-            let num1 = document.getElementById("num1").value;
-            let num2 = document.getElementById("num2").value;
-            let operation = document.getElementById("operation").value;
+    // Розрахунок
+    function calculate() {
+      let { num1, num2, operation } = calcData;
 
-            if (!num1 || !num2 || !operation) {
-                alert("Будь ласка, введіть обидва числа та операцію!");
-                return;
-            }
+      if (!num1 || !num2 || !operation) {
+        alert("Будь ласка, введіть обидва числа та операцію!");
+        return;
+      }
 
-            num1 = parseFloat(num1);
-            num2 = parseFloat(num2);
-            let result;
+      num1 = parseFloat(num1);
+      num2 = parseFloat(num2);
+      let result;
 
-            switch (operation) {
-                case "+": result = num1 + num2; break;
-                case "-": result = num1 - num2; break;
-                case "*": result = num1 * num2; break;
-                case "/":
-                    if (num2 === 0) {
-                        alert("Ділення на нуль неможливе!");
-                        return;
-                    }
-                    result = num1 / num2;
-                    break;
-                default:
-                    alert("Невірна операція!");
-                    return;
-            }
+      switch (operation) {
+        case "+": result = num1 + num2; break;
+        case "-": result = num1 - num2; break;
+        case "*": result = num1 * num2; break;
+        case "/":
+          if (num2 === 0) {
+            alert("Ділення на нуль неможливе!");
+            return;
+          }
+          result = num1 / num2;
+          break;
+        default:
+          alert("Невірна операція!");
+          return;
+      }
 
-            alert("Результат: " + result);
-        }
-    </script>
+      alert("Результат: " + result);
+    }
+  </script>
 </body>
-
 </html>
