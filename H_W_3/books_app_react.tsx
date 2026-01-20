@@ -11,40 +11,41 @@ interface Book {
   isRead: boolean;
 }
 
-const BooksApp = () => {
-  const [books, setBooks] = useState<Book[]>([
-    {
-      id: '1',
-      name: 'Тіні забутих предків',
-      author: 'Михайло Коцюбинський',
-      genre: 'Повість',
-      rating: 5,
-      description: 'Класична українська повість про кохання Івана та Марічки в Карпатах.',
-      imgUrl: 'https://via.placeholder.com/200x300/4A90E2/ffffff?text=Книга+1',
-      isRead: false
-    },
-    {
-      id: '2',
-      name: 'Захар Беркут',
-      author: 'Іван Франко',
-      genre: 'Історичний роман',
-      rating: 4,
-      description: 'Історичний роман про боротьбу карпатських горян проти монгольської навали.',
-      imgUrl: 'https://via.placeholder.com/200x300/E94B3C/ffffff?text=Книга+2',
-      isRead: true
-    },
-    {
-      id: '3',
-      name: 'Собор',
-      author: 'Олесь Гончар',
-      genre: 'Роман',
-      rating: 5,
-      description: 'Роман про духовні цінності українського народу та боротьбу за їх збереження.',
-      imgUrl: 'https://via.placeholder.com/200x300/6FCF97/ffffff?text=Книга+3',
-      isRead: false
-    }
-  ]);
+const INITIAL_BOOKS: Book[] = [
+  {
+    id: '1',
+    name: 'Тіні забутих предків',
+    author: 'Михайло Коцюбинський',
+    genre: 'Повість',
+    rating: 5,
+    description: 'Класична українська повість про кохання Івана та Марічки в Карпатах.',
+    imgUrl: 'https://via.placeholder.com/200x300/4A90E2/ffffff?text=Книга+1',
+    isRead: false
+  },
+  {
+    id: '2',
+    name: 'Захар Беркут',
+    author: 'Іван Франко',
+    genre: 'Історичний роман',
+    rating: 4,
+    description: 'Історичний роман про боротьбу карпатських горян проти монгольської навали.',
+    imgUrl: 'https://via.placeholder.com/200x300/E94B3C/ffffff?text=Книга+2',
+    isRead: true
+  },
+  {
+    id: '3',
+    name: 'Собор',
+    author: 'Олесь Гончар',
+    genre: 'Роман',
+    rating: 5,
+    description: 'Роман про духовні цінності українського народу та боротьбу за їх збереження.',
+    imgUrl: 'https://via.placeholder.com/200x300/6FCF97/ffffff?text=Книга+3',
+    isRead: false
+  }
+];
 
+const BooksApp = () => {
+  const [books, setBooks] = useState<Book[]>(INITIAL_BOOKS);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
   const [filter, setFilter] = useState({ id: '', name: '', author: '' });
   const [newBook, setNewBook] = useState({
@@ -60,31 +61,41 @@ const BooksApp = () => {
   const prevFilter = useRef(filter);
   const prevSelectedBookId = useRef(selectedBookId);
 
-  // componentDidMount
+  // componentDidMount - окремий useEffect
   useEffect(() => {
     console.log('✅ Компонент BooksApp змонтовано');
     isMounted.current = true;
   }, []);
 
-  // componentDidUpdate
+  // componentDidUpdate для books - окремий useEffect
   useEffect(() => {
     if (!isMounted.current) return;
-
+    
     if (prevBooks.current !== books) {
       console.log('📚 Список книг оновлено:', books);
       prevBooks.current = books;
     }
+  }, [books]);
 
+  // componentDidUpdate для filter - окремий useEffect
+  useEffect(() => {
+    if (!isMounted.current) return;
+    
     if (JSON.stringify(prevFilter.current) !== JSON.stringify(filter)) {
       console.log('🔍 Фільтр змінено:', filter);
       prevFilter.current = filter;
     }
+  }, [filter]);
 
+  // componentDidUpdate для selectedBookId - окремий useEffect
+  useEffect(() => {
+    if (!isMounted.current) return;
+    
     if (prevSelectedBookId.current !== selectedBookId) {
       console.log('📖 Навігація: selectedBookId змінено на', selectedBookId);
       prevSelectedBookId.current = selectedBookId;
     }
-  }, [books, filter, selectedBookId]);
+  }, [selectedBookId]);
 
   const filteredBooks = books.filter(book => {
     const matchesId = filter.id === '' || book.id.toLowerCase().includes(filter.id.toLowerCase());
