@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Автори - Бібліотека{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Список авторів</h2>
+    <p class="subtitle">Усі автори з підрахунком їхніх книг</p>
+</div>
+
+{% if authors %}
+    <div class="authors-grid">
+        {% for author in authors %}
+        <div class="author-card">
+            <div class="author-header">
+                <h3>
+                    <a href="{% url 'library:author_books' author.id %}">{{ author.name }}</a>
+                </h3>
+                <span class="badge">{{ author.books_count }} {% if author.books_count == 1 %}книга{% elif author.books_count < 5 %}книги{% else %}книг{% endif %}</span>
+            </div>
+            
+            {% if author.email %}
+            <div class="author-info">
+                <p><strong>Email:</strong> <a href="mailto:{{ author.email }}">{{ author.email }}</a></p>
+            </div>
+            {% endif %}
+            
+            {% if author.bio %}
+            <div class="author-bio">
+                <p>{{ author.bio|truncatewords:30 }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="author-actions">
+                <a href="{% url 'library:author_books' author.id %}" class="btn btn-primary">Переглянути книги</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>📚 Поки що немає авторів у бібліотеці.</p>
+        <p><a href="/admin/library/author/add/">Додати першого автора</a></p>
+    </div>
+{% endif %}
+{% endblock %}
