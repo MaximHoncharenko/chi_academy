@@ -4,3 +4,46 @@
 /H_W_2/node_modules
 /H_W_2/package-lock.json
 /H_W_2/package.json
+/H_W_8/library_project/QUICKSTART.md
+/H_W_8/library_project/setup.bat
+/H_W_8/library_project/TROUBLESHOOTING.md
+/H_W_8/library_project/EXAMPLES.md
+/H_W_8/library_project/ARCHITECTURE.md
+/H_W_8/library_project.zip
+
+
+
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
