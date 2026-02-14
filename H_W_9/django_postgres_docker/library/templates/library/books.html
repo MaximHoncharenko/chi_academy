@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Книги - Бібліотека{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Усі книги</h2>
+    <p class="subtitle">Повний каталог книг у бібліотеці</p>
+</div>
+
+{% if books %}
+    <div class="books-list">
+        {% for book in books %}
+        <div class="book-card">
+            <div class="book-header">
+                <h3>{{ book.title }}</h3>
+                <span class="date-badge">{{ book.published_date|date:"d.m.Y" }}</span>
+            </div>
+            
+            <div class="book-author">
+                <p><strong>Автор:</strong> 
+                    <a href="{% url 'library:author_books' book.author.id %}">{{ book.author.name }}</a>
+                </p>
+                {% if book.author.email %}
+                <p class="author-email"><strong>Email автора:</strong> {{ book.author.email }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="book-description">
+                <p>{{ book.description }}</p>
+            </div>
+            
+            {% if book.author.bio %}
+            <div class="author-bio-short">
+                <p><strong>Про автора:</strong> {{ book.author.bio|truncatewords:20 }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>📖 Поки що немає книг у бібліотеці.</p>
+        <p><a href="/admin/library/book/add/">Додати першу книгу</a></p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Книги автора {{ author.name }} - Бібліотека{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="breadcrumb">
+        <a href="{% url 'library:authors' %}">← Назад до авторів</a>
+    </div>
+    <h2>Книги автора: {{ author.name }}</h2>
+    {% if author.email %}
+    <p class="subtitle">Email: {{ author.email }}</p>
+    {% endif %}
+</div>
+
+{% if author.bio %}
+<div class="author-bio-full">
+    <h3>Про автора</h3>
+    <p>{{ author.bio }}</p>
+</div>
+{% endif %}
+
+<div class="page-header">
+    <h3>Книги ({{ books|length }})</h3>
+</div>
+
+{% if books %}
+    <div class="books-list">
+        {% for book in books %}
+        <div class="book-card">
+            <div class="book-header">
+                <h3>{{ book.title }}</h3>
+                <span class="date-badge">{{ book.published_date|date:"d.m.Y" }}</span>
+            </div>
+            
+            <div class="book-description">
+                <p>{{ book.description }}</p>
+            </div>
+            
+            <div class="book-meta">
+                <p><strong>Дата публікації:</strong> {{ book.published_date|date:"d F Y" }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>📖 У цього автора поки що немає книг у бібліотеці.</p>
+        <p><a href="/admin/library/book/add/">Додати книгу</a></p>
+    </div>
+{% endif %}
+
+<div class="back-link">
+    <a href="{% url 'library:authors' %}" class="btn btn-secondary">← Повернутися до списку авторів</a>
+</div>
+{% endblock %}
