@@ -1,0 +1,87 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────
+# docker-compose.yml  |  FastAPI + PostgreSQL
+#
+# Сервіси:
+#   db   — PostgreSQL 15 (база даних)
+#   web  — FastAPI + Uvicorn (застосунок)
+#
+# Запуск:  docker-compose up --build
+# Стоп:    docker-compose down
+# Стоп + видалити дані: docker-compose down -v
+# ─────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: fastapi_postgres
+
+    environment:
+      POSTGRES_DB:       fastapi_db
+      POSTGRES_USER:     fastapi_user
+      POSTGRES_PASSWORD: fastapi_password
+
+    volumes:
+      # Зберігаємо дані між перезапусками
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      # 5433 (хост) → 5432 (контейнер)
+      # Використовуємо 5433, бо 5432 зайнятий локальним PostgreSQL
+      - "5433:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fastapi_user -d fastapi_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+    networks:
+      - app_network
+
+  # ── FastAPI ──────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_app
+
+    # Команда запуску (можна перевизначити entrypoint.sh)
+    # command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+    environment:
+      # З'єднання з БД (host = ім'я сервісу "db")
+      DATABASE_URL: postgresql+asyncpg://fastapi_user:fastapi_password@db:5432/fastapi_db
+      DB_HOST:      db
+      DB_PORT:      5432
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      # Монтуємо код → зміни одразу без rebuild (для розробки)
+      - .:/app
+
+    depends_on:
+      db:
+        condition: service_healthy   # Чекаємо поки PostgreSQL здоровий
+
+    networks:
+      - app_network
+
+    restart: unless-stopped
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    name: fastapi_postgres_data
+
+# ── Networks ─────────────────────────────────────────────────
+networks:
+  app_network:
+    driver: bridge
+    name: fastapi_network
