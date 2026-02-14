@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Бібліотека{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📚 Бібліотека</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'library:authors' %}" {% if request.resolver_match.url_name == 'authors' %}class="active"{% endif %}>Автори</a></li>
+                    <li><a href="{% url 'library:books' %}" {% if request.resolver_match.url_name == 'books' %}class="active"{% endif %}>Книги</a></li>
+                    <li><a href="/admin/" target="_blank">Адмін-панель</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Бібліотека. Django застосунок.</p>
+        </div>
+    </footer>
+</body>
+</html>
