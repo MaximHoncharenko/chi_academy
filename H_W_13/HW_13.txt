@@ -1,0 +1,67 @@
+Завдання 1 — Order
+Який принцип порушено? SRP — Single Responsibility Principle.
+Чому? Бо клас робить одразу три різні речі: рахує суму, зберігає в базу і відправляє email. А повинен відповідати тільки за одне.
+Рефакторинг:
+pythonclass Order:
+    def __init__(self, items):
+        self.items = items
+
+    def calculate_total(self):
+        return sum(item.price for item in self.items)
+
+class OrderRepository:
+    def save(self, order):
+        print("Збереження в базу даних")
+
+class EmailService:
+    def send_confirmation(self, order):
+        print("Відправка email")
+
+Завдання 2 — PaymentProcessor
+Який принцип порушено? OCP — Open/Closed Principle.
+Чому? Бо якщо треба додати новий спосіб оплати — доведеться лізти в клас і дописувати elif. Клас має бути відкритий для розширення, але закритий для змін.
+Рефакторинг:
+pythonfrom abc import ABC, abstractmethod
+
+class PaymentMethod(ABC):
+    @abstractmethod
+    def pay(self):
+        pass
+
+class CardPayment(PaymentMethod):
+    def pay(self):
+        print("Оплата карткою")
+
+class PayPalPayment(PaymentMethod):
+    def pay(self):
+        print("Оплата через PayPal")
+
+class PaymentProcessor:
+    def process(self, payment: PaymentMethod):
+        payment.pay()
+
+Завдання 3 — Penguin(Bird)
+Який принцип порушено? LSP — Liskov Substitution Principle.
+Чому? Пінгвін — це птах, але він не літає. Якщо ми використаємо його там, де очікується Bird з методом fly() — все зламається.
+Рефакторинг:
+pythonfrom abc import ABC, abstractmethod
+
+class Bird(ABC):
+    @abstractmethod
+    def move(self):
+        pass
+
+class FlyingBird(Bird):
+    def move(self):
+        print("Летить")
+
+class SwimmingBird(Bird):
+    def move(self):
+        print("Плаває")
+
+class Eagle(FlyingBird):
+    pass
+
+class Penguin(SwimmingBird):
+    pass
+Тепер кожен птах робить те, що вміє, і нічого не зламається.
