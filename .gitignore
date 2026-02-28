@@ -58,3 +58,12 @@ Thumbs.db
 *.md
 !README.md
 !**/README.md
+# Project
+/project/.env
+/project/.venv
+/project/venv
+/project/__pycache__
+/project/.pytest_cache
+/project/.coverage
+/project/coverage_html
+/project/*.pyc
